@@ -1,0 +1,241 @@
+package proyectofinal;
+import javax.swing.JOptionPane;
+
+/**
+ *
+ * @author jojul
+ */
+public class ProduccionesPalace {
+     private static Usuario[] usuarios = new Usuario[100];
+    private static Evento[] eventos = new Evento[100];
+    private static int contadorUsuarios = 0;
+    private static int contadorEventos = 0;
+
+    public static void main(String[] args) {
+        boolean seguir = true;
+
+        while (seguir) {
+            int opcion = Integer.parseInt(JOptionPane.showInputDialog(
+                    "Producciones Palace\n" +
+                            "1. Iniciar sesión\n" +
+                            "2. Crear nuevo usuario\n" +
+                            "3. Agregar horario a evento\n" +
+                            "4. Editar horario de evento\n" +
+                            "5. Inactivar evento\n" +
+                            "6. Salir"
+            ));
+
+            switch (opcion) {
+                case 1:
+                    iniciarSesion();
+                    break;
+                case 2:
+                    crearUsuario();
+                    break;
+                case 3:
+                    agregarHorarioEvento();
+                    break;
+                case 4:
+                    editarHorarioEvento();
+                    break;
+                case 5:
+                    inactivarEvento();
+                    break;
+                case 6:
+                    seguir = false;
+                    break;
+                default:
+                    JOptionPane.showMessageDialog(null, "Opción inválida. Intente de nuevo.");
+            }
+        }
+    }
+
+    // Clase Usuario
+    private static class Usuario {
+        private String nombreApellido;
+        private String usuario;
+        private String password;
+        private boolean estado;
+        private String correo;
+
+        public Usuario(String nombreApellido, String usuario, String password, boolean estado, String correo) {
+            this.nombreApellido = nombreApellido;
+            this.usuario = usuario;
+            this.password = password;
+            this.estado = estado;
+            this.correo = correo;
+        }
+
+        public String getNombreApellido() {
+            return nombreApellido;
+        }
+
+        public String getUsuario() {
+            return usuario;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public boolean getEstado() {
+            return estado;
+        }
+
+        public void setEstado(boolean estado) {
+            this.estado = estado;
+        }
+    }
+
+    // Clase Evento
+    private static class Evento {
+        private String nombreEvento;
+        private String horario;
+
+        public Evento(String nombreEvento, String horario) {
+            this.nombreEvento = nombreEvento;
+            this.horario = horario;
+        }
+
+        public String getNombreEvento() {
+            return nombreEvento;
+        }
+
+        public String getHorario() {
+            return horario;
+        }
+
+        public void setHorario(String horario) {
+            this.horario = horario;
+        }
+    }
+
+    // Métodos para Usuarios
+    public static void agregarUsuario(Usuario usuario) {
+        if (contadorUsuarios < usuarios.length) {
+            usuarios[contadorUsuarios] = usuario;
+            contadorUsuarios++;
+            JOptionPane.showMessageDialog(null, "Usuario registrado exitosamente.");
+        } else {
+            JOptionPane.showMessageDialog(null, "No es posible registrar más usuarios, capacidad máxima alcanzada.");
+        }
+    }
+
+    public static void consultarUsuarios() {
+        String listaUsuarios = "Lista de usuarios:\n";
+        for (int i = 0; i < contadorUsuarios; i++) {
+            listaUsuarios += usuarios[i].getNombreApellido() + " - " + usuarios[i].getUsuario() + "\n";
+        }
+        JOptionPane.showMessageDialog(null, listaUsuarios);
+    }
+
+    public static void iniciarSesion() {
+        String usuario = JOptionPane.showInputDialog("Ingrese su usuario:");
+        String password = JOptionPane.showInputDialog("Ingrese su contraseña:");
+
+        boolean encontrado = false;
+
+        for (int i = 0; i < contadorUsuarios; i++) {
+            if (usuarios[i].getUsuario().equals(usuario) && usuarios[i].getPassword().equals(password)) {
+                encontrado = true;
+                if (usuarios[i].getEstado()) {
+                    JOptionPane.showMessageDialog(null, "Bienvenido, " + usuarios[i].getNombreApellido() + "!");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Su cuenta está inactiva, por favor contacte al administrador.");
+                }
+                break;
+            }
+        }
+
+        if (!encontrado) {
+            JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos.");
+        }
+    }
+
+    public static void crearUsuario() {
+        String nombreApellido = JOptionPane.showInputDialog("Ingrese su nombre y apellido:");
+        String usuario = JOptionPane.showInputDialog("Ingrese un nombre de usuario:");
+        String password = JOptionPane.showInputDialog("Ingrese una contraseña:");
+        String correo = JOptionPane.showInputDialog("Ingrese su correo:");
+        boolean estado = true;
+
+        Usuario nuevoUsuario = new Usuario(nombreApellido, usuario, password, estado, correo);
+        agregarUsuario(nuevoUsuario);
+    }
+
+    // Métodos para Eventos
+    public static void agregarEvento(Evento evento) {
+        if (contadorEventos < eventos.length) {
+            eventos[contadorEventos] = evento;
+            contadorEventos++;
+            JOptionPane.showMessageDialog(null, "Evento agregado exitosamente.");
+        } else {
+            JOptionPane.showMessageDialog(null, "No es posible agregar más eventos, capacidad máxima alcanzada.");
+        }
+    }
+
+    public static void consultarEventos() {
+        String listaEventos = "Lista de eventos:\n";
+        for (int i = 0; i < contadorEventos; i++) {
+            listaEventos += eventos[i].getNombreEvento() + " - " + eventos[i].getHorario() + "\n";
+        }
+        JOptionPane.showMessageDialog(null, listaEventos);
+    }
+
+    public static void agregarHorarioEvento() {
+        String nombreEvento = JOptionPane.showInputDialog("Ingrese el nombre del evento:");
+        String horario = JOptionPane.showInputDialog("Ingrese el horario del evento:");
+
+        boolean eventoExiste = false;
+        for (int i = 0; i < contadorEventos; i++) {
+            if (eventos[i].getNombreEvento().equalsIgnoreCase(nombreEvento)) {
+                eventoExiste = true;
+                break;
+            }
+        }
+
+        if (eventoExiste) {
+            JOptionPane.showMessageDialog(null, "El evento ya existe, no es posible agregar un horario.");
+        } else {
+            Evento nuevoEvento = new Evento(nombreEvento, horario);
+            agregarEvento(nuevoEvento);
+        }
+    }
+
+    public static void editarHorarioEvento() {
+        String nombreEvento = JOptionPane.showInputDialog("Ingrese el nombre del evento a editar:");
+        String nuevoHorario = JOptionPane.showInputDialog("Ingrese el nuevo horario del evento:");
+
+        boolean eventoEncontrado = false;
+        for (int i = 0; i < contadorEventos; i++) {
+            if (eventos[i].getNombreEvento().equalsIgnoreCase(nombreEvento)) {
+                eventoEncontrado = true;
+                eventos[i].setHorario(nuevoHorario);
+                JOptionPane.showMessageDialog(null, "Horario del evento actualizado exitosamente.");
+                break;
+            }
+        }
+
+        if (!eventoEncontrado) {
+            JOptionPane.showMessageDialog(null, "Evento no encontrado.");
+        }
+    }
+
+    public static void inactivarEvento() {
+        String nombreEvento = JOptionPane.showInputDialog("Ingrese el nombre del evento a inactivar:");
+
+        boolean eventoEncontrado = false;
+        for (int i = 0; i < contadorEventos; i++) {
+            if (eventos[i].getNombreEvento().equalsIgnoreCase(nombreEvento)) {
+                eventoEncontrado = true;
+                eventos[i].setHorario("Inactivo");
+                JOptionPane.showMessageDialog(null, "Evento inactivado exitosamente.");
+                break;
+            }
+        }
+
+        if (!eventoEncontrado) {
+            JOptionPane.showMessageDialog(null, "Evento no encontrado.");
+        }
+    }
+}
